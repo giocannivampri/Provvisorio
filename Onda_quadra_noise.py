@@ -108,6 +108,32 @@ def onda_quadra7(freq, rep):
 
 
 def make_onda_quadra(freq, n=11*10**5):
+    """Generation of square wave correlated noise with maximum variance (0.25).
+
+    Algorithm details: 
+    
+        Given a desired frequency, the algorithm searches for the two square waves with the
+        nearest frequencies. Then, it combines them, appending one after
+        the other. The choice of the subsequent wave to append is made with a specific
+        probability, calculated with a weighted mean of the waves periods, in order to
+        obtain a final signal with a specific frequency lying between the two. 
+        To maintain the right variance, every time a wave with an odd period is chosen, the algorithm also makes another random
+        choice on the number of 1s and 0s of the wave. 
+        For low frequency noises (0.11<=freq<0.166) the choice of the two waves 
+        is performed considering only even wave periods. This is done because,
+        with longer periods, two subsequent waves start to be too similar and the resulting noise too correlated.
+        
+    Note:
+        This is a rough generation method, indeed, the power peak in the resulting noise spectrum may not be 
+        exactly at the desired frequency, hence some hand tuning may be required. 
+
+    Args:
+        freq (float): peak frequency 
+        n (int): number of iterations. Defaults to 11*10**5.
+
+    Returns:
+        ndarray: array of square waves
+    """
     if freq>=0.11 and freq<0.125 :
         noise=onda_quadra8(freq, n//8 +1)
         noise=noise[:n]
